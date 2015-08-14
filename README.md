@@ -46,19 +46,7 @@ Currently there are three scripts:
 Distributes windows across 2 x 2 grid (affects only the last active one).
 Accepted arguments:
 
-<table border="0">
-  <tr>
-    <td>
-      <img src="http://apaszke.github.io/termtile/assets/img/quaters.svg" alt="Quater arguments">
-    </td>
-    <td>
-      <img src="http://apaszke.github.io/termtile/assets/img/vertical.svg" alt="Quater arguments">
-    </td>
-    <td>
-      <img src="http://apaszke.github.io/termtile/assets/img/horizontal.svg" alt="Quater arguments">
-    </td>
-  </tr>
-</table>
+<img src="http://apaszke.github.io/termtile/assets/img/tile_args.svg" alt="Quater arguments">
 
 **centerTerminal.applescript**
 
