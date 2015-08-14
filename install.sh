@@ -1,13 +1,20 @@
 #!/bin/bash
 
+is_yes() {
+  yesses={y,Y,yes,Yes,YES}
+  if [[ $yesses =~ $1 ]]; then
+    echo 1
+  fi
+}
+
 # ==============================================================================
 # Check the platform
 # ==============================================================================
 platform="$(uname)"
 if [[ "$platform" != 'Darwin' ]]; then
   echo "These scripts are only compatible with OS X."
-  read -p "Are you sure that you want to continue? [y/N] " shouldContinue
-  if [[ "$shouldContinue" != "y" ]] && [[ "$shouldContinue" != "Y" ]]; then
+  read -p "Are you sure that you want to continue? [y/N] " should_continue
+  if [[ ! $(is_yes $should_continue) ]]; then
     exit
   fi
 fi
@@ -15,51 +22,50 @@ fi
 # ==============================================================================
 # Get the default terminal app
 # ==============================================================================
-currentApp="$(osascript -e \
+current_app="$(osascript -e \
 'tell application "System Events"
   item 1 of (get name of processes whose frontmost is true)
 end tell'
 )"
 
-read -p "What is your default terminal app? [$currentApp] " terminalApp
+read -p "What is your default terminal app? [$current_app] " terminal_app
 
-if [[ ! $appName ]]; then
-  terminalApp=$currentApp
+if [[ ! $terminal_app ]]; then
+  terminal_app=$current_app
 fi
 
 
 # ==============================================================================
 # Ask for install location
 # ==============================================================================
-read -p "Where should the scripts be installed? [~/.mac_util/] " installDir
+read -p "Where should the scripts be installed? [~/.mac_util/] " install_dir
 
-if [[ ! $installDir ]]; then
-  installDir="~/.mac_util/"
+if [[ ! $install_dir ]]; then
+  install_dir="~/.mac_util/"
 fi
 
 # ==============================================================================
 # Compile sources
 # ==============================================================================
-echo "Compiling sources"
+echo "Compiling sources..."
 mkdir -p build
 
 # Insert app name into the config file
 sed '4i\
-set _config to _config & {terminalApp:"'$terminalApp'"}
+set _config to _config & {terminalApp:"'$terminal_app'"}
 ' src/config.applescript.default > src/config.applescript
 
 for script in src/*.applescript; do
   outname=${script#src/}
   outname=build/${outname/.applescript/}.scpt
-  echo $outname
   osacompile -o $outname $script
 done
 
 # ==============================================================================
 # Compile sources
 # ==============================================================================
-echo "Copying files"
-bash -c "cp -r build/ $installDir"
+echo "Copying files..."
+bash -c "cp -r build/ $install_dir"
 
 # ==============================================================================
 # Setup aliases
@@ -74,5 +80,48 @@ else
   echo "You'll have to set up aliases on your own."
 fi
 
-if [[ RC_FILE ]]; then
+aliases[0]="ul"   ;  arguments[0]="up left"
+aliases[1]="ur"   ;  arguments[1]="up right"
+aliases[2]="dl"   ;  arguments[2]="down left"
+aliases[3]="dr"   ;  arguments[3]="down right"
+aliases[4]="ll"   ;  arguments[4]="left"
+aliases[5]="rr"   ;  arguments[5]="right"
+aliases[6]="up"   ;  arguments[6]="up"
+aliases[7]="down" ;  arguments[7]="down"
+
+
+newline=$'\n'
+create_alias() {
+  alias=$1
+  script=$2
+  args="${@:3}"
+  type $alias >/dev/null 2>&1
+  alias_exists=$?
+  if [[ $alias_exists -eq 0 ]]; then
+    read -p "Alias $alias is already in use! Do you want to override it? [y/N] " should_override
+  fi
+  if [[ ! $alias_exists -eq 0 ]] || [[ $(is_yes $should_override) ]]; then
+    rc_append+="alias $alias='osascript ${install_dir}${script} ${args}'${newline}"
+  fi
+}
+
+if [[ $RC_FILE ]]; then
+  rc_append=$newline
+  read -p "Do you want to add the default aliases to $RC_FILE? [y/N] " should_alias
+  if [[ $(is_yes $should_alias) ]]; then
+    # expand aliases in the scripts
+    shopt -s expand_aliases
+    # we only care about the aliases, so silence the warnings
+    source $RC_FILE >/dev/null 2>&1
+    # add aliases
+    for i in ${!aliases[*]}; do
+      create_alias ${aliases[$i]} "tileTerminal.scpt" ${arguments[$i]}
+    done
+    create_alias "big" "bigTerminal.scpt"
+    create_alias "cen" "centerTerminal.scpt"
+  fi
+  rc_append+=$newline
+  echo "$rc_append" >> "$RC_FILE"
 fi
+
+
