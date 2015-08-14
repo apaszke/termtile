@@ -1,7 +1,7 @@
-tileterm
+termtile
 =============
 
-tileterm is a set of scripts, which set you free from your mouse and trackpad. Don't distract yourself and manage your terminal windows with a handful of commands.
+termtile is a set of scripts, which set you free from your mouse and touchpad. Don't distract yourself and manage all your terminal windows with a handful of commands.
 
 ![Gif demo](http://apaszke.github.io/termtile/assets/img/main_demo.gif)
 
@@ -43,7 +43,7 @@ Currently there are three scripts:
 
 **tileTerminal.applescript**
 
-Distributes windows across 2 x 2 grid (affects only the last active one).
+Distributes windows across 2 x 2 grid (affects only the last active window).
 Accepted arguments:
 
 <img src="http://apaszke.github.io/termtile/assets/img/tile_args.svg" alt="Quater arguments">
