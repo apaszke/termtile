@@ -38,10 +38,12 @@ fi
 # ==============================================================================
 # Ask for install location
 # ==============================================================================
-read -p "Where should the scripts be installed? [~/.mac_util/] " install_dir
+read -p "Where should the scripts be installed? [~/.termtile/] " install_dir
 
 if [[ ! $install_dir ]]; then
-  install_dir="~/.mac_util/"
+  install_dir="~/.termtile/"
+else
+  install_dir+="/"
 fi
 
 # ==============================================================================
@@ -98,7 +100,14 @@ create_alias() {
   type $alias >/dev/null 2>&1
   alias_exists=$?
   if [[ $alias_exists -eq 0 ]]; then
-    read -p "Alias $alias is already in use! Do you want to override it? [y/N] " should_override
+    read -p "$alias is already in use! Do you want to override it? [y/N] " should_override
+  fi
+  if [[ ! $(is_yes $should_override) ]]; then
+    read -p "What alias should be used then? (leave blank to omit) " new_alias
+    if [[ $new_alias ]]; then
+      alias=$new_alias
+      alias_exists=1
+    fi
   fi
   if [[ ! $alias_exists -eq 0 ]] || [[ $(is_yes $should_override) ]]; then
     rc_append+="alias $alias='osascript ${install_dir}${script} ${args}'${newline}"
@@ -115,11 +124,11 @@ if [[ $RC_FILE ]]; then
     source $RC_FILE >/dev/null 2>&1
     # add aliases
     for i in ${!aliases[*]}; do
-      create_alias ${aliases[$i]} "tileTerminal.scpt" ${arguments[$i]}
+      create_alias ${aliases[$i]} "tile.scpt" ${arguments[$i]}
     done
-    create_alias "big" "bigTerminal.scpt"
-    create_alias "cen" "centerTerminal.scpt"
+    create_alias "big" "resize.scpt"
+    create_alias "cen" "center.scpt"
+    rc_append+=$newline
+    echo "$rc_append" >> "$RC_FILE"
   fi
-  rc_append+=$newline
-  echo "$rc_append" >> "$RC_FILE"
 fi
