@@ -8,6 +8,9 @@ All scripts are written in AppleScript, so they are unfortunately limited to OS 
 
 ![Gif demo](http://apaszke.github.io/termtile/assets/img/main_demo.gif)
 
+*(Tip: enable Command key option in Preferences > Profiles > Window, so you'll see
+the keyboard shortcut which jumps to a particular window)*
+
 Installation
 -----------
 
