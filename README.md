@@ -11,7 +11,7 @@ All scripts are written in AppleScript, so they are unfortunately limited to OS 
 Installation
 -----------
 
-Just paste the following lines into the terminal:
+Just paste the following lines into Your terminal:
 
 ```bash
 git clone https://github.com/apaszke/termtile
