@@ -1,6 +1,8 @@
 termtile
 =============
 
+> termtile doesn't work with multi-screen systems at the moment. I am aware of this issue and it should be fixed within few days. Sorry.
+
 termtile is a set of scripts, which set you free from your mouse and touchpad.
 Don't distract yourself and manage all your terminal windows with a handful of commands.
 
