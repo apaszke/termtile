@@ -115,7 +115,7 @@ create_alias() {
 }
 
 if [[ $RC_FILE ]]; then
-  rc_append="# Added by termtile (https://github.com/apaszke/termtile)"$newline
+  rc_append=$newline"# Added by termtile (https://github.com/apaszke/termtile)"$newline
   read -p "Do you want to add the default aliases to $RC_FILE? [y/N] " should_alias
   if [[ $(is_yes $should_alias) ]]; then
     # expand aliases in the scripts
