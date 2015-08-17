@@ -62,6 +62,11 @@ for script in src/*.applescript; do
   outname=build/${outname/.applescript/}.scpt
   osacompile -o $outname $script
 done
+for utility in src/*.m; do
+  outname=${utility#src/}
+  outname=build/${outname/.m/}
+  cc -framework AppKit -o $outname $utility
+done
 
 # ==============================================================================
 # Compile sources
