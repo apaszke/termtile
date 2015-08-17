@@ -128,6 +128,7 @@ if [[ $RC_FILE ]]; then
     done
     create_alias "big" "resize.scpt"
     create_alias "cen" "center.scpt"
+    create_alias "full" "full.scpt"
     rc_append+=$newline
     echo "$rc_append" >> "$RC_FILE"
   fi
