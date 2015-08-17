@@ -73,6 +73,10 @@ Centers the window.
 Makes the window comfortably sized for tasks requiring more space (eg. vim).
 Default size is 1000x600, but it can be changed with the arguments (first is width, second is height).
 
+**maximize.applescript**
+
+Maximizes the window.
+
 
 Contributing
 ------------
