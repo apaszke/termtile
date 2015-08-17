@@ -37,6 +37,7 @@ The `install.sh` script can set up several aliases for You:
 * `dr` - fill lower-right quarter
 * `big` - make the window bigger
 * `cen` - center the window
+* `max` - maximize the window
 
 You can always change them on your own. They always look like this:
 
