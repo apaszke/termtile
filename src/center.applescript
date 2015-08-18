@@ -5,19 +5,13 @@ on run argv
 	set ScreenUtils to load script alias ((path to me as text) & "::screenUtils.scpt")
 	set _config to run script alias ((path to me as text) & "::config.scpt")
 
-
 	set _terminalApp to terminalApp of _config
+
+	tell ScreenUtils to set _screen to getScreenWithFrontmostWindowOfApp(_terminalApp)
 
 	using terms from application "Terminal"
 		tell application _terminalApp
 			set _bounds to bounds of window 0
-		end tell
-	end using terms from
-
-	tell ScreenUtils to set _screen to getScreenWithBounds(_bounds)
-
-	using terms from application "Terminal"
-		tell application _terminalApp
 			set _windowWidth to (item 3 of _bounds) - (item 1 of _bounds)
 			set _windowHeight to (item 4 of _bounds) - (item 2 of _bounds)
 			set _upperW to (originX of _screen) + ((width of _screen) - _windowWidth) / 2

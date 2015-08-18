@@ -1,8 +1,10 @@
 on run argv
 	global _cache
 	set _cache to {}
+
 	set ScreenUtils to load script alias ((path to me as text) & "::screenUtils.scpt")
 	set _config to run script alias ((path to me as text) & "::config.scpt")
+
 	set _terminalApp to terminalApp of _config
 
 	set _marginV to marginV of _config
@@ -13,13 +15,7 @@ on run argv
 		return -1
 	end if
 
-	using terms from application "Terminal"
-		tell application _terminalApp
-			set _bounds to bounds of window 0
-		end tell
-	end using terms from
-
-	tell ScreenUtils to set _screen to getScreenWithBounds(_bounds)
+	tell ScreenUtils to set _screen to getScreenWithFrontmostWindowOfApp(_terminalApp)
 
 	using terms from application "Terminal"
 		tell application _terminalApp
@@ -28,10 +24,10 @@ on run argv
 				if _direction = up then
 					set bounds of window 0 to {originX of _screen, 0, (originX of _screen) + (width of _screen), (height of _screen) / 2 - _marginV}
 				else if _direction = down then
-					-- adding 23, because height doesn't take the menu bar into account
+					-- adding 23, because height doesn't take the menu bar into account, and we're not starting at 0...
 					set bounds of window 0 to {originX of _screen, (height of _screen) / 2 + _marginV, (originX of _screen) + (width of _screen), (height of _screen) + 23}
 				else if _direction = left then
-					set bounds of window 0 to {originX of _screen, 0, (originX of _screen) + (width of _screen) / 2 - _marginV, height of _screen}
+					set bounds of window 0 to {originX of _screen, 0, (originX of _screen) + (width of _screen) / 2 - _marginH, height of _screen}
 				else (* _direction = right *)
 					set bounds of window 0 to {(originX of _screen) + (width of _screen) / 2 + _marginH, 0, (originX of _screen) + (width of _screen), height of _screen}
 				end if
@@ -43,8 +39,10 @@ on run argv
 				else if _vertical = up and _horizontal = right then
 					set bounds of window 0 to {(originX of _screen) + (width of _screen) / 2 + _marginH, 0, (originX of _screen) + (width of _screen), (height of _screen) / 2 - _marginV}
 				else if _vertical = down and _horizontal = left then
+					-- adding 23, because height doesn't take the menu bar into account, and we're not starting at 0...
 					set bounds of window 0 to {originX of _screen, (height of _screen) / 2 + _marginV, (originX of _screen) + (width of _screen) / 2 - _marginH, height of _screen + 23}
 				else if _vertical = down and _horizontal = right then
+					-- adding 23, because height doesn't take the menu bar into account, and we're not starting at 0...
 					set bounds of window 0 to {(originX of _screen) + (width of _screen) / 2 + _marginH, (height of _screen) / 2 + _marginV, (originX of _screen) + (width of _screen), height of _screen + 23}
 				end if
 			end if

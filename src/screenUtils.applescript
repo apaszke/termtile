@@ -87,3 +87,13 @@ on getScreenWithBounds(_bounds)
 	end if
 	return _result
 end getScreenWithBounds
+
+on getScreenWithFrontmostWindowOfApp(_appName)
+	using terms from application "Terminal"
+		tell application _appName
+			set _bounds to bounds of window 0
+		end tell
+	end using terms from
+
+	return getScreenWithBounds(_bounds)
+end getScreenWithBounds
