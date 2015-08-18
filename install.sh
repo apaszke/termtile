@@ -79,11 +79,11 @@ bash -c "cp -r build/ $install_dir"
 # ==============================================================================
 
 if [[ $(echo $SHELL | grep bash) ]]; then
-    RC_FILE=$HOME/.bashrc
+  RC_FILE=$HOME/.bashrc
 elif [[ $(echo $SHELL | grep zsh) ]]; then
-    RC_FILE=$HOME/.zshrc
+  RC_FILE=$HOME/.zshrc
 elif [[ $(echo $SHELL | grep fish) ]]; then
-    RC_FILE=$HOME/.config/fish/config.fish
+  RC_FILE=$HOME/.config/fish/config.fish
 else
   echo "Unknown shell type!"
   echo "You'll have to set up aliases on your own."
@@ -103,7 +103,7 @@ newline=$'\n'
 create_alias() {
   local should_override
   local new_alias
-  local alias=$1
+  local alias=$alias_prefix$1
   local script=$2
   local args="${@:3}"
   type $alias >/dev/null 2>&1
@@ -112,25 +112,53 @@ create_alias() {
     read -p "$alias is already in use! Do you want to override it? [y/N] " should_override
   fi
   if [[ $alias_exists -eq 0 ]] && [[ ! $(is_yes $should_override) ]]; then
-    read -p "What alias should be used then? (leave blank to omit) " new_alias
+    read -p "What alias should be used then (leave blank to omit)? " new_alias
     if [[ $new_alias ]]; then
       alias=$new_alias
       alias_exists=1
     fi
   fi
   if [[ ! $alias_exists -eq 0 ]] || [[ $(is_yes $should_override) ]]; then
-    rc_append+="alias $alias='osascript ${install_dir}${script} ${args}'${newline}"
+    rc_append+="alias ${alias}='osascript ${install_dir}${script} ${args}'${newline}"
   fi
 }
 
 if [[ $RC_FILE ]]; then
   rc_append=$newline"# Added by termtile (https://github.com/apaszke/termtile)"$newline
-  read -p "Do you want to add the default aliases to $RC_FILE? [y/N] " should_alias
+  read -p "Do you want to add aliases to $RC_FILE? [y/N] " should_alias
   if [[ $(is_yes $should_alias) ]]; then
+    echo "Configuring aliases..."
     # expand aliases in the scripts
     shopt -s expand_aliases
     # we only care about the aliases, so silence the warnings
     source $RC_FILE >/dev/null 2>&1
+
+    # "ll" is often used as "ls -l"
+    type ll >/dev/null 2>&1
+    using_ll=$?
+    if [[ $using_ll -eq 0 ]]; then
+      echo ""
+      echo "It appears that 'll' command is already used."
+      echo "I can change the default aliases:"
+      echo "ll -> fl         (fill left)"
+      echo "rr -> fr         (fill right)"
+      read -p "Do you want to switch them? [Y/n] " should_switch_defaults
+      if [[ ! $should_switch_defaults ]] || [[ $(is_yes $should_switch_defaults) ]]; then
+        echo "Changing the defaults..."
+        echo ""
+        aliases[4]="fl"
+        aliases[5]="fr"
+      fi
+    fi
+
+    # ask for prefix
+    read -p "Do you want to use a prefix for all aliases? [y/N] " should_prefix
+    if [[ $(is_yes $should_prefix) ]]; then
+      read -p "Enter prefix for all aliases: " alias_prefix
+    else
+      alias_prefix=""
+    fi
+
     # add aliases
     for i in ${!aliases[*]}; do
       create_alias ${aliases[$i]} "tile.scpt" ${arguments[$i]}
@@ -138,7 +166,6 @@ if [[ $RC_FILE ]]; then
     create_alias "big" "resize.scpt"
     create_alias "cen" "center.scpt"
     create_alias "max" "maximize.scpt"
-    rc_append+=$newline
     echo "$rc_append" >> "$RC_FILE"
   fi
 fi

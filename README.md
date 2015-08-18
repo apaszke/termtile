@@ -28,7 +28,17 @@ You can delete the cloned repository afterwards.
 Aliases
 -------
 
-The `install.sh` script can set up several aliases for You:
+`install.sh` can configure all the aliases for you.
+
+**Don't worry about the conflicts**. There are three ways of dealing with them already implemented:
+
+0. If you're already using `ll` then the defaults can be changed:
+  * `ll` -> `fl`
+  * `rr` -> `fr`
+0. You can specify a prefix for all commands.
+0. If you already have a conflicting command and you deny to overwrite it, the script will ask you for another name, so you can choose it for each alias separately (prefix will still be applied).
+
+Default aliases:
 * `ll` - fill left half of the screen
 * `rr` - fill right half
 * `up` - fill upper half
@@ -41,7 +51,7 @@ The `install.sh` script can set up several aliases for You:
 * `cen` - center the window
 * `max` - maximize the window
 
-You can always change them on your own. They always look like this:
+You can always customize them on your own. They always look like this:
 
 ```bash
 alias ll='osascript ~/.termtile/tile.scpt left'
