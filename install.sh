@@ -77,6 +77,8 @@ if [[ $(echo $SHELL | grep bash) ]]; then
     RC_FILE=$HOME/.bashrc
 elif [[ $(echo $SHELL | grep zsh) ]]; then
     RC_FILE=$HOME/.zshrc
+elif [[ $(echo $SHELL | grep fish) ]]; then
+    RC_FILE=$HOME/.config/fish/config.fish
 else
   echo "Unknown shell type!"
   echo "You'll have to set up aliases on your own."
