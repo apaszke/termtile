@@ -32,12 +32,19 @@ on getAllScreens()
 
 	set _linesOffset to 3
 	repeat (item 1 of _lines as number) times
+		set _screenIndex to _linesOffset - 2
 		set _screenInfo to split(item _linesOffset of _lines, " ")
 		set _originX to item 1 of _screenInfo as integer
 		set _originY to item 2 of _screenInfo as integer
 		set _width to item 3 of _screenInfo as integer
 		set _height to item 4 of _screenInfo as integer
-		set _screens to _screens & {{originX:_originX, originY:_originY, width:_width, height:_height}}
+		(* HANDLE DOCK *)
+		(* TODO: RETHINK *)
+		if _dockScreen = _screenIndex then
+			set _height to _height - _dockHeight
+		end if
+		(* END HANDLING DOCK *)
+		set _screens to _screens & {{screenIndex:_screenIndex, originX:_originX, originY:_originY, width:_width, height:_height}}
 		set _linesOffset to _linesOffset + 1
 	end repeat
 
@@ -55,13 +62,6 @@ on getScreenWithCoordinates(_x, _y)
 		set _screen to item _index of _screens
 		if (originX of _screen) <= _x and _x < (originX of _screen) + (width of _screen) then
 			if (originY of _screen) <= _y and _y < (originY of _screen) + (height of _screen) then
-				set _dock to dock of _screenInfo
-				(* HANDLE DOCK *)
-				(* TODO: RETHINK *)
-				if screenIndex of _dock = _index then
-					set height of _screen to ((height of _screen) - (height of _dock))
-				end if
-				(* END HANDLING DOCK *)
 				return _screen
 			end if
 		end if
@@ -96,4 +96,4 @@ on getScreenWithFrontmostWindowOfApp(_appName)
 	end using terms from
 
 	return getScreenWithBounds(_bounds)
-end getScreenWithBounds
+end getScreenWithFrontmostWindowOfApp

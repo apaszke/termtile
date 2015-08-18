@@ -50,6 +50,7 @@ Default aliases:
 * `big` - make the window bigger
 * `cen` - center the window
 * `max` - maximize the window
+* `sn` - move to the next display
 
 You can always customize them on your own. They always look like this:
 
@@ -89,6 +90,11 @@ Default size is 1000x600, but it can be changed with the arguments (first is wid
 **maximize.applescript**
 
 Maximizes the window.
+
+**changeScreen.applescript**
+
+Moves the window to another screen. Currently only supports
+moving to the next display on a list.
 
 
 Contributing

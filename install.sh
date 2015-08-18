@@ -166,6 +166,7 @@ if [[ $RC_FILE ]]; then
     create_alias "big" "resize.scpt"
     create_alias "cen" "center.scpt"
     create_alias "max" "maximize.scpt"
+    create_alias "sn" "changeScreen.scpt" "next"
     echo "$rc_append" >> "$RC_FILE"
   fi
 fi
