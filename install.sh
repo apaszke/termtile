@@ -96,15 +96,17 @@ aliases[7]="down" ;  arguments[7]="down"
 
 newline=$'\n'
 create_alias() {
-  alias=$1
-  script=$2
-  args="${@:3}"
+  local should_override
+  local new_alias
+  local alias=$1
+  local script=$2
+  local args="${@:3}"
   type $alias >/dev/null 2>&1
-  alias_exists=$?
+  local alias_exists=$?
   if [[ $alias_exists -eq 0 ]]; then
     read -p "$alias is already in use! Do you want to override it? [y/N] " should_override
   fi
-  if [[ ! $(is_yes $should_override) ]]; then
+  if [[ $alias_exists -eq 0 ]] && [[ ! $(is_yes $should_override) ]]; then
     read -p "What alias should be used then? (leave blank to omit) " new_alias
     if [[ $new_alias ]]; then
       alias=$new_alias
