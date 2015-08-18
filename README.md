@@ -1,10 +1,10 @@
 termtile
 =============
 
-> termtile's `master` doesn't work with multiple screens at the moment. I am aware of this issue and it should be fixed very soon (like tommorow). There is a `multi-screen` branch that has the first dirty implementation (but it works!), so you can checkout and install it now.
-
 termtile is a set of scripts, which set you free from your mouse and touchpad.
 Don't distract yourself and manage all your terminal windows with a handful of commands.
+
+**Now with multi-screen support!**
 
 All scripts are written in AppleScript, so they are unfortunately limited to OS X at the moment.
 
