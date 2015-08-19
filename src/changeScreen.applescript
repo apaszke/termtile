@@ -13,7 +13,7 @@ on run argv
 	end if
 
 	try
-		tell ScreenUtils to set _screen to getScreenWithFrontmostWindowOfApp(_terminalApp)
+		tell ScreenUtils to set _currentScreen to getScreenWithFrontmostWindowOfApp(_terminalApp)
 	on error
 		return
 	end try
@@ -44,4 +44,3 @@ on getNextScreen(_screens, _currentScreen)
 	end if
 	return item _nextIndex of _screens
 end getNextScreen
-
