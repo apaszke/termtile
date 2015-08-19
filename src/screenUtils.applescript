@@ -17,7 +17,12 @@ on getAllScreens()
 
 	tell application "System Events"
 		tell dock preferences
-			set _autohide to autohide
+			set _dockAutohide to autohide
+			set _dockPosition to screen edge
+			-- there constants are out of scope later... thx AppleScript
+			set _bottom to bottom
+			set _left to left
+			set _right to right
 		end tell
 	end tell
 
@@ -40,15 +45,29 @@ on getAllScreens()
 		set _height to item 4 of _screenInfo as integer
 		(* HANDLE DOCK *)
 		(* TODO: RETHINK *)
-		if _dockScreen = _screenIndex then
-			set _height to _height - _dockHeight
+		if not _dockAutohide then
+			if _dockPosition = _bottom then
+				-- don't trust the ObjC utility - there's no way to reliably detect dock with it
+				if _screenIndex > 0 then
+					if _dockScreen = _screenIndex then
+						set _height to _height - _dockHeight
+					end if
+				else
+					set _height to _height - DOCK_HEIGHT
+				end if
+			else if _dockPosition = _left then
+				set _originX to 60
+				set _width to _width - 60
+			else if _dockPosition = _right then
+				set _width to _width - 60
+			end if
 		end if
 		(* END HANDLING DOCK *)
 		set _screens to _screens & {{screenIndex:_screenIndex, originX:_originX, originY:_originY, width:_width, height:_height}}
 		set _linesOffset to _linesOffset + 1
 	end repeat
 
-	set _result to {dock:{autohide:_autohide, height:_dockHeight, screenIndex:_dockScreen}, screens:_screens}
+	set _result to {dock:{autohide:_dockAutohide, height:_dockHeight, screenIndex:_dockScreen}, screens:_screens}
 	set _cache to _cache & {getAllScreens:_result}
 
 	return _result

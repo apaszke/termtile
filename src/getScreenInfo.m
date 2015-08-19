@@ -20,9 +20,9 @@ void printScreenInfo() {
         screenVisibleRect = [screen visibleFrame];
         screenRect = [screen frame];
         CGFloat diffHeight = screenRect.size.height - screenVisibleRect.size.height;
+        diffHeight -= index == 0 ? MENU_HEIGHT : 0;
 
         if (diffHeight != 0) {
-            diffHeight -= index == 0 ? MENU_HEIGHT : 0;
             dockScreenIndex = index;
             offsetBottom = diffHeight;
             break;
