@@ -79,12 +79,18 @@ on getScreenWithBounds(_bounds)
 	if _result = {} then
 		set _result to getScreenWithCoordinates(_rx, _ry)
 	end if
+
 	if _result = {} then
-		set _alertResponse to display alert "Something wierd happened. " message "Your window appears to be entirely off screen. Please post an issue on GitHub attaching a screenshot and a brief description." as critical buttons {"Go to GitHub", "Never mind"} default button "Go to GitHub"
-		if button returned of _alertResponse = "Go to Github" then
-			tell application "Safari" to open location "https://github.com/apaszke/termtile/issues"
+		-- silence warning if fullscreen
+		if not _ly < 20 then
+			set _alertResponse to display alert "Something wierd happened. " message "Your window appears to be entirely off screen. Please post an issue on GitHub attaching a screenshot and a brief description." as critical buttons {"Go to GitHub", "Never mind"} default button "Go to GitHub"
+			if button returned of _alertResponse = "Go to Github" then
+				tell application "Safari" to open location "https://github.com/apaszke/termtile/issues"
+			end if
 		end if
+		error "getScreenWithBounds: No screen found for bounds {" & _lx & ", " & _ly & ", " & _rx & ", " & _ry & "}" number 501
 	end if
+
 	return _result
 end getScreenWithBounds
 

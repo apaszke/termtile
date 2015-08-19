@@ -51,6 +51,7 @@ Default aliases:
 * `cen` - center the window
 * `max` - maximize the window
 * `sn` - move to the next display
+* `fs` - toggles terminal app fullscreen
 
 You can always customize them on your own. They always look like this:
 
@@ -95,6 +96,10 @@ Maximizes the window.
 
 Moves the window to another screen. Currently only supports
 moving to the next display on a list.
+
+**fullscreen.applescript**
+
+Toggles fullscreen for the terminal app.
 
 
 Contributing
