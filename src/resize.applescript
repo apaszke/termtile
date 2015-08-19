@@ -1,5 +1,10 @@
 on run argv
+	global _cache
+	set _cache to {}
+
+	set ScreenUtils to load script alias ((path to me as text) & "::screenUtils.scpt")
 	set _config to run script alias ((path to me as text) & "::config.scpt")
+
 	set _terminalApp to terminalApp of _config
 
 	set _width to 1000
@@ -9,6 +14,13 @@ on run argv
 		set _width to item 1 of argv
 		set _height to item 2 of argv
 	end if
+
+	-- check if it's not in fullscreen mode
+	try
+		tell ScreenUtils to set _screen to getScreenWithFrontmostWindowOfApp(_terminalApp)
+	on error
+		return
+	end try
 
 	using terms from application "Terminal"
 		tell application _terminalApp

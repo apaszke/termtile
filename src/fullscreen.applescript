@@ -1,6 +1,3 @@
-global _cache
-set _cache to {}
-
 set _config to run script alias ((path to me as text) & "::config.scpt")
 
 set _terminalApp to terminalApp of _config

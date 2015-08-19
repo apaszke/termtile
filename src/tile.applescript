@@ -15,7 +15,11 @@ on run argv
 		return -1
 	end if
 
-	tell ScreenUtils to set _screen to getScreenWithFrontmostWindowOfApp(_terminalApp)
+	try
+		tell ScreenUtils to set _screen to getScreenWithFrontmostWindowOfApp(_terminalApp)
+	on error
+		return
+	end try
 
 	using terms from application "Terminal"
 		tell application _terminalApp
