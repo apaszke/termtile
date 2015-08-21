@@ -23,31 +23,33 @@ on run argv
 
 	using terms from application "Terminal"
 		tell application _terminalApp
+			-- Terminal is kind of wierd
+			if _terminalApp = "Terminal" then
+				set originY of _screen to 23
+			end if
+
 			if (count of _directions) = 1 then
 				set _direction to item 1 of _directions
 				if _direction = up then
-					set bounds of window 0 to {originX of _screen, 0, (originX of _screen) + (width of _screen), (height of _screen) / 2 - _marginV}
+					set bounds of window 0 to {originX of _screen, originY of _screen, (originX of _screen) + (width of _screen), (originY of _screen) + (height of _screen) / 2 - _marginV}
 				else if _direction = down then
-					-- adding 23, because height doesn't take the menu bar into account, and we're not starting at 0...
-					set bounds of window 0 to {originX of _screen, (height of _screen) / 2 + _marginV, (originX of _screen) + (width of _screen), (height of _screen) + 23}
+					set bounds of window 0 to {originX of _screen, (originY of _screen) + (height of _screen) / 2 + _marginV, (originX of _screen) + (width of _screen), (originY of _screen) + (height of _screen)}
 				else if _direction = left then
-					set bounds of window 0 to {originX of _screen, 0, (originX of _screen) + (width of _screen) / 2 - _marginH, height of _screen}
+					set bounds of window 0 to {originX of _screen, originY of _screen, (originX of _screen) + (width of _screen) / 2 - _marginH, (originY of _screen) + (height of _screen)}
 				else (* _direction = right *)
-					set bounds of window 0 to {(originX of _screen) + (width of _screen) / 2 + _marginH, 0, (originX of _screen) + (width of _screen), height of _screen}
+					set bounds of window 0 to {(originX of _screen) + (width of _screen) / 2 + _marginH, originY of _screen, (originX of _screen) + (width of _screen), (originY of _screen) + (height of _screen)}
 				end if
 			else
 				set _horizontal to horizontal of _directions
 				set _vertical to vertical of _directions
 				if _vertical = up and _horizontal = left then
-					set bounds of window 0 to {originX of _screen, 0, (originX of _screen) + (width of _screen) / 2 - _marginH, (height of _screen) / 2 - _marginV}
+					set bounds of window 0 to {originX of _screen, originY of _screen, (originX of _screen) + (width of _screen) / 2 - _marginH, (originY of _screen) + (height of _screen) / 2 - _marginV}
 				else if _vertical = up and _horizontal = right then
-					set bounds of window 0 to {(originX of _screen) + (width of _screen) / 2 + _marginH, 0, (originX of _screen) + (width of _screen), (height of _screen) / 2 - _marginV}
+					set bounds of window 0 to {(originX of _screen) + (width of _screen) / 2 + _marginH, originY of _screen, (originX of _screen) + (width of _screen), (originY of _screen) + (height of _screen) / 2 - _marginV}
 				else if _vertical = down and _horizontal = left then
-					-- adding 23, because height doesn't take the menu bar into account, and we're not starting at 0...
-					set bounds of window 0 to {originX of _screen, (height of _screen) / 2 + _marginV, (originX of _screen) + (width of _screen) / 2 - _marginH, height of _screen + 23}
+					set bounds of window 0 to {originX of _screen, (originY of _screen) + (height of _screen) / 2 + _marginV, (originX of _screen) + (width of _screen) / 2 - _marginH, (originY of _screen) + height of _screen}
 				else if _vertical = down and _horizontal = right then
-					-- adding 23, because height doesn't take the menu bar into account, and we're not starting at 0...
-					set bounds of window 0 to {(originX of _screen) + (width of _screen) / 2 + _marginH, (height of _screen) / 2 + _marginV, (originX of _screen) + (width of _screen), height of _screen + 23}
+					set bounds of window 0 to {(originX of _screen) + (width of _screen) / 2 + _marginH, (originY of _screen) + (height of _screen) / 2 + _marginV, (originX of _screen) + (width of _screen), (originY of _screen) + (height of _screen)}
 				end if
 			end if
 		end tell

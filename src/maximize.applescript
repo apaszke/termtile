@@ -14,7 +14,11 @@ end try
 
 using terms from application "Terminal"
 	tell application _terminalApp
-		-- ignoring originY because window stays on the same screen...
-		set bounds of window 0 to {originX of _screen, 0, (originX of _screen) + (width of _screen), height of _screen}
+		-- Terminal is kind of wierd
+		if _terminalApp = "Terminal"
+			set originY of _screen to 23
+		end if
+
+		set bounds of window 0 to {originX of _screen, originY of _screen, (originX of _screen) + (width of _screen), (originY of _screen) + (height of _screen)}
 	end tell
 end using terms from
