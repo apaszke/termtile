@@ -101,6 +101,13 @@ moving to the next display on a list.
 
 Toggles fullscreen for the terminal app.
 
+Troubleshooting
+---------------
+
+If you're using any scripts, which can affect your dock settings, then it might mess up
+the values termtile reads. If it starts working in a wierd way after you change the dock position
+or size please try to reboot your machine.
+
 
 Contributing
 ------------

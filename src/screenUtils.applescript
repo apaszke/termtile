@@ -1,6 +1,12 @@
 global _cache
 set _cache to {}
 
+property MIN_DOCK_SIZE : 10
+-- for dock at the bottom
+property DEFAULT_DOCK_HEIGHT : 80
+-- for vertical dock
+property DEFAULT_DOCK_WIDTH : 60
+
 on split(_str, _delimiter)
 	set _oldDelimiters to AppleScript's text item delimiters
 	set AppleScript's text item delimiters to _delimiter
@@ -15,23 +21,22 @@ on getAllScreens()
 		return _tmp
 	end try
 
-	tell application "System Events"
-		tell dock preferences
-			set _dockAutohide to autohide
-			set _dockPosition to screen edge
-			-- there constants are out of scope later... thx AppleScript
-			set _bottom to bottom
-			set _left to left
-			set _right to right
-		end tell
-	end tell
-
 	set _aspath to ((path to me as text) & "::getScreenInfo")
 	set _utilpath to POSIX path of _aspath
 
 	set _lines to paragraphs of (do shell script _utilpath)
-	set _dockHeight to word 1 of (item 2 of _lines) as number
-	set _dockScreen to word 2 of (item 2 of _lines) as number
+	set _dockLeft to word 1 of (item 2 of _lines) as number
+	set _dockBottom to word 2 of (item 2 of _lines) as number
+	set _dockRight to word 3 of (item 2 of _lines) as number
+	set _dockScreen to word 4 of (item 2 of _lines) as number
+
+	-- getScreenInfo sometimes malfunctions
+	if _dockLeft < MIN_DOCK_SIZE and _dockBottom < MIN_DOCK_SIZE and _dockRight < MIN_DOCK_SIZE then
+		set _dockScreen to 0
+	end if
+
+	-- autohide will be set in handleDock (it can't append)
+	set _dockInfo to {autohide:-1, offsetLeft:_dockLeft, offsetBottom:_dockBottom, offsetRight:_dockRight, screenIndex:_dockScreen}
 
 	set _screens to {}
 
@@ -43,35 +48,58 @@ on getAllScreens()
 		set _originY to item 2 of _screenInfo as integer
 		set _width to item 3 of _screenInfo as integer
 		set _height to item 4 of _screenInfo as integer
-		(* HANDLE DOCK *)
-		(* TODO: RETHINK *)
-		if not _dockAutohide then
-			if _dockPosition = _bottom then
-				-- don't trust the ObjC utility - there's no way to reliably detect dock with it
-				if _screenIndex > 0 then
-					if _dockScreen = _screenIndex then
-						set _height to _height - _dockHeight
-					end if
-				else
-					set _height to _height - DOCK_HEIGHT
-				end if
-			else if _dockPosition = _left then
-				set _originX to 60
-				set _width to _width - 60
-			else if _dockPosition = _right then
-				set _width to _width - 60
-			end if
-		end if
-		(* END HANDLING DOCK *)
-		set _screens to _screens & {{screenIndex:_screenIndex, originX:_originX, originY:_originY, width:_width, height:_height}}
+		set _currentScreen to {screenIndex:_screenIndex, originX:_originX, originY:_originY, width:_width, height:_height}
+
+		handleDock(_currentScreen, _dockInfo)
+
+		set _screens to _screens & {_currentScreen}
 		set _linesOffset to _linesOffset + 1
 	end repeat
 
-	set _result to {dock:{autohide:_dockAutohide, height:_dockHeight, screenIndex:_dockScreen}, screens:_screens}
+	set _result to {dock:_dockInfo, screens:_screens}
 	set _cache to _cache & {getAllScreens:_result}
 
 	return _result
 end getAllScreens
+
+on handleDock(_screen, _dock)
+	tell application "System Events"
+		tell dock preferences
+			set _dockAutohide to autohide
+			set _dockPosition to screen edge
+			-- there constants are out of scope later... thx AppleScript
+			set _bottom to bottom
+			set _left to left
+			set _right to right
+		end tell
+	end tell
+
+	set autohide of _dock to _dockAutohide
+
+	if not _dockAutohide then
+		-- if _dockScreen = 0 then the second condition is always false,
+		-- but I'm leaving it for better readability
+		if screenIndex of _dock > 0 and screenIndex of _dock = screenIndex of _screen then
+			set height of _screen to (height of _screen) - (offsetBottom of _dock)
+			set width of _screen to (width of _screen) - (offsetLeft of _dock) - (offsetRight of _dock)
+			set originX of _screen to (originX of _screen) + (offsetLeft of _dock)
+		end if
+		(* AppleScript fallback *)
+		if screenIndex of _dock = 0 then
+			if _dockPosition = _bottom then
+				set height of _screen to (height of _screen) - DEFAULT_DOCK_HEIGHT
+				set offsetBottom of _dock to DEFAULT_DOCK_HEIGHT
+			else if _dockPosition = _left then
+				set originX of _screen to DEFAULT_DOCK_HEIGHT
+				set width of _screen to (width of _screen) - DEFAULT_DOCK_HEIGHT
+				set offsetLeft of _dock to DEFAULT_DOCK_HEIGHT
+			else if _dockPosition = _right then
+				set width of _screen to (width of _screen) - DEFAULT_DOCK_HEIGHT
+				set offsetRight of _dock to DEFAULT_DOCK_HEIGHT
+			end if
+		end if
+	end if
+end handleDock
 
 on getScreenWithCoordinates(_x, _y)
 	set _screenInfo to getAllScreens()

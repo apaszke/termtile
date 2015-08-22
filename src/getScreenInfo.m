@@ -10,9 +10,9 @@ void printScreenInfo() {
 
     printf("%lu\n", (unsigned long)[screenArray count]);
 
-    NSRect mainFrame = [[screenArray objectAtIndex:0] frame];
-
     CGFloat offsetBottom = 0;
+    CGFloat offsetLeft = 0;
+    CGFloat offsetRight = 0;
     NSInteger dockScreenIndex = -1;
     for (NSUInteger index = 0; index < screenCount; index++)
     {
@@ -20,17 +20,27 @@ void printScreenInfo() {
         screenVisibleRect = [screen visibleFrame];
         screenRect = [screen frame];
         CGFloat diffHeight = screenRect.size.height - screenVisibleRect.size.height;
+        CGFloat diffWidth = screenRect.size.width - screenVisibleRect.size.width;
         diffHeight -= index == 0 ? MENU_HEIGHT : 0;
 
         if (diffHeight != 0) {
             dockScreenIndex = index;
             offsetBottom = diffHeight;
             break;
+        } else if (diffWidth != 0) {
+            dockScreenIndex = index;
+            if (screenVisibleRect.origin.x - screenRect.origin.x > 0) {
+                offsetLeft = diffWidth;
+            } else {
+                offsetRight = diffWidth;
+            }
+            break;
         }
     }
 
-    printf("%.0f %lu\n", offsetBottom, dockScreenIndex + 1);
+    printf("%.0f %.0f %.0f %lu\n", offsetLeft, offsetBottom, offsetRight, dockScreenIndex + 1);
 
+    NSRect mainFrame = [[screenArray objectAtIndex:0] frame];
     for (NSUInteger index = 0; index < screenCount; index++)
     {
         NSScreen *screen = [screenArray objectAtIndex: index];
@@ -46,5 +56,6 @@ int main(int argc, const char * argv[]) {
     @autoreleasepool {
         printScreenInfo();
     }
+
     return 0;
 }
