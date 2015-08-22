@@ -31,6 +31,12 @@ on run argv
 				if _windowWidth > width of _newScreen then
 					set _windowWidth to width of _newScreen
 				end if
+
+				-- Terminal handles the originY in a kind of relative way
+				if _terminalApp = "Terminal" then
+					set originY of _newScreen to (originY of _newScreen - originY of _currentScreen)
+				end if
+
 				set bounds of window 0 to {originX of _newScreen, originY of _newScreen, (originX of _newScreen) + _windowWidth, (originY of _newScreen) + _windowHeight}
 			end if
 		end tell
