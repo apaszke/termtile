@@ -9,36 +9,43 @@ void printScreenInfo() {
     NSUInteger screenCount = [screenArray count];
 
     printf("%lu\n", (unsigned long)[screenArray count]);
-
-    NSRect mainFrame = [[screenArray objectAtIndex:0] frame];
-
-    CGFloat offsetBottom = 0;
+    
+    NSRect mainFrame = [[NSScreen mainScreen] frame];
+    
+    CGFloat diffHeight;
+    CGFloat diffWidth;
+    
     NSInteger dockScreenIndex = -1;
     for (NSUInteger index = 0; index < screenCount; index++)
     {
-        NSScreen *screen = [screenArray objectAtIndex: index];
+        NSScreen *screen = screenArray[index];
+        
+        // visibleFrame does not include menubar or dock
         screenVisibleRect = [screen visibleFrame];
         screenRect = [screen frame];
-        CGFloat diffHeight = screenRect.size.height - screenVisibleRect.size.height;
+        
+        diffHeight = screenRect.size.height - screenVisibleRect.size.height;
+        diffWidth = screenRect.size.width - screenVisibleRect.size.width;
+        
+        // account for the menu bar on the primary screen
         diffHeight -= index == 0 ? MENU_HEIGHT : 0;
-
-        if (diffHeight != 0) {
+        
+        // use FLT_EPSILON to avoid exact comparisons of floats
+        if (diffHeight > FLT_EPSILON || diffWidth > FLT_EPSILON) {
             dockScreenIndex = index;
-            offsetBottom = diffHeight;
             break;
         }
     }
-
-    printf("%.0f %lu\n", offsetBottom, dockScreenIndex + 1);
+    
+    printf("%.0f %.0f %lu\n", diffHeight, diffWidth, dockScreenIndex + 1);
 
     for (NSUInteger index = 0; index < screenCount; index++)
     {
         NSScreen *screen = [screenArray objectAtIndex: index];
-        screenVisibleRect = [screen visibleFrame];
         screenRect = [screen frame];
         CGFloat upperLeftY = -screenRect.origin.y - screenRect.size.height + mainFrame.size.height + MENU_HEIGHT;
         CGFloat height = screenRect.size.height - MENU_HEIGHT;
-        printf("%.0f %.0f %.0f %.0f\n",screenRect.origin.x, upperLeftY, screenRect.size.width, height);
+        printf("%.0f %.0f %.0f %.0f\n", screenRect.origin.x, upperLeftY, screenRect.size.width, height);
     }
 }
 

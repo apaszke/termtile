@@ -14,7 +14,7 @@ on getAllScreens()
 		set _tmp to getAllScreens of _cache
 		return _tmp
 	end try
-
+	
 	tell application "System Events"
 		tell dock preferences
 			set _dockAutohide to autohide
@@ -25,16 +25,17 @@ on getAllScreens()
 			set _right to right
 		end tell
 	end tell
-
+	
 	set _aspath to ((path to me as text) & "::getScreenInfo")
 	set _utilpath to POSIX path of _aspath
-
+	
 	set _lines to paragraphs of (do shell script _utilpath)
 	set _dockHeight to word 1 of (item 2 of _lines) as number
-	set _dockScreen to word 2 of (item 2 of _lines) as number
-
+	set _dockWidth to word 2 of (item 2 of _lines) as number
+	set _dockScreen to word 3 of (item 2 of _lines) as number
+	
 	set _screens to {}
-
+	
 	set _linesOffset to 3
 	repeat (item 1 of _lines as number) times
 		set _screenIndex to _linesOffset - 2
@@ -43,33 +44,29 @@ on getAllScreens()
 		set _originY to item 2 of _screenInfo as integer
 		set _width to item 3 of _screenInfo as integer
 		set _height to item 4 of _screenInfo as integer
+		
 		(* HANDLE DOCK *)
-		(* TODO: RETHINK *)
 		if not _dockAutohide then
-			if _dockPosition = _bottom then
-				-- don't trust the ObjC utility - there's no way to reliably detect dock with it
-				if _screenIndex > 0 then
-					if _dockScreen = _screenIndex then
-						set _height to _height - _dockHeight
-					end if
+			if _screenIndex > 0 and _screenIndex = _dockScreen then
+				if _dockPosition = _bottom then
+					set _height to _height - _dockHeight
+				else if _dockPosition = _left then
+					set _originX to _dockWidth
+					set _width to _width - _dockWidth
 				else
-					set _height to _height - DOCK_HEIGHT
+					set _width to _width - _dockWidth
 				end if
-			else if _dockPosition = _left then
-				set _originX to 60
-				set _width to _width - 60
-			else if _dockPosition = _right then
-				set _width to _width - 60
 			end if
 		end if
 		(* END HANDLING DOCK *)
+		
 		set _screens to _screens & {{screenIndex:_screenIndex, originX:_originX, originY:_originY, width:_width, height:_height}}
 		set _linesOffset to _linesOffset + 1
 	end repeat
-
+	
 	set _result to {dock:{autohide:_dockAutohide, height:_dockHeight, screenIndex:_dockScreen}, screens:_screens}
 	set _cache to _cache & {getAllScreens:_result}
-
+	
 	return _result
 end getAllScreens
 
@@ -98,7 +95,7 @@ on getScreenWithBounds(_bounds)
 	if _result = {} then
 		set _result to getScreenWithCoordinates(_rx, _ry)
 	end if
-
+	
 	if _result = {} then
 		-- silence warning if fullscreen
 		if not _ly < 20 then
@@ -109,7 +106,7 @@ on getScreenWithBounds(_bounds)
 		end if
 		error "getScreenWithBounds: No screen found for bounds {" & _lx & ", " & _ly & ", " & _rx & ", " & _ry & "}" number 501
 	end if
-
+	
 	return _result
 end getScreenWithBounds
 
@@ -119,6 +116,6 @@ on getScreenWithFrontmostWindowOfApp(_appName)
 			set _bounds to bounds of window 0
 		end tell
 	end using terms from
-
+	
 	return getScreenWithBounds(_bounds)
 end getScreenWithFrontmostWindowOfApp
