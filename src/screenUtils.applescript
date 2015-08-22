@@ -114,6 +114,19 @@ on getScreenWithCoordinates(_x, _y)
 		end if
 		set _index to _index + 1
 	end repeat
+
+	-- use less or equal if scrict inequalities don't return any screen
+	set _index to 1
+	repeat (count of _screens) times
+		set _screen to item _index of _screens
+		if (originX of _screen) <= _x and _x <= (originX of _screen) + (width of _screen) then
+			if (originY of _screen) <= _y and _y <= (originY of _screen) + (height of _screen) then
+				return _screen
+			end if
+		end if
+		set _index to _index + 1
+	end repeat
+
 	return {}
 end getScreenWithCoordinates
 
