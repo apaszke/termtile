@@ -93,10 +93,10 @@ aliases[0]="ul"   ;  arguments[0]="up left"
 aliases[1]="ur"   ;  arguments[1]="up right"
 aliases[2]="dl"   ;  arguments[2]="down left"
 aliases[3]="dr"   ;  arguments[3]="down right"
-aliases[4]="ll"   ;  arguments[4]="left"
-aliases[5]="rr"   ;  arguments[5]="right"
+aliases[4]="fl"   ;  arguments[4]="left"
+aliases[5]="fr"   ;  arguments[5]="right"
 aliases[6]="up"   ;  arguments[6]="up"
-aliases[7]="down" ;  arguments[7]="down"
+aliases[7]="dn" ;  arguments[7]="down"
 
 
 newline=$'\n'
